@@ -1,22 +1,39 @@
 package com.yoyo.entity;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2018/3/1 0001.
  */
+
+
+
+
 public class Money {
-    private String documentNumber;          //单证号
-    private String carrier;                 //承运人
-    private String vehicleNumber;           //车辆牌照号
-    private String licensePlateTypeCode;    //牌照类型代码
-    private String shippingNoteList;        //运单列表
-    private String shippingNoteNumber;      //托运单号
-    private String remark;                  //备注
-    private String financiallist;           //财务列表
-    private String paymentMeansCode;        //付款方式代码
-    private String bankCode;                //银行代码
-    private String sequenceCode;            //流水号/序列号
-    private String monetaryAmount;          //货币金额
-    private String dateTime;                //日期时间
+    /**
+     * 单证号
+     */
+    private String documentNumber;
+    /**
+     * 承运人
+     */
+    private String carrier;
+    /**
+     * 车辆牌照号
+     */
+    private String vehicleNumber;
+    /**
+     * 牌照类型代码
+     */
+    private String licensePlateTypeCode;
+    /**
+     * 运单列表
+     */
+    private List<ShippingNote> shippingNoteList;
+    /**
+     * 财务列表
+     */
+    private List<Financial> financiallist;
 
     public String getDocumentNumber() {
         return documentNumber;
@@ -50,75 +67,110 @@ public class Money {
         this.licensePlateTypeCode = licensePlateTypeCode;
     }
 
-    public String getShippingNoteList() {
+    public List<ShippingNote> getShippingNoteList() {
         return shippingNoteList;
     }
 
-    public void setShippingNoteList(String shippingNoteList) {
+    public void setShippingNoteList(List<ShippingNote> shippingNoteList) {
         this.shippingNoteList = shippingNoteList;
     }
 
-    public String getShippingNoteNumber() {
-        return shippingNoteNumber;
-    }
-
-    public void setShippingNoteNumber(String shippingNoteNumber) {
-        this.shippingNoteNumber = shippingNoteNumber;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public String getFinanciallist() {
+    public List<Financial> getFinanciallist() {
         return financiallist;
     }
 
-    public void setFinanciallist(String financiallist) {
+    public void setFinanciallist(List<Financial> financiallist) {
         this.financiallist = financiallist;
     }
 
-    public String getPaymentMeansCode() {
-        return paymentMeansCode;
+
+    public class ShippingNote{
+        /**
+         * 托运单号
+         */
+        private String shippingNoteNumber;
+        /**
+         * 备注
+         */
+        private String remark;
+
+        public String getShippingNoteNumber() {
+            return shippingNoteNumber;
+        }
+
+        public void setShippingNoteNumber(String shippingNoteNumber) {
+            this.shippingNoteNumber = shippingNoteNumber;
+        }
+
+        public String getRemark() {
+            return remark;
+        }
+
+        public void setRemark(String remark) {
+            this.remark = remark;
+        }
     }
 
-    public void setPaymentMeansCode(String paymentMeansCode) {
-        this.paymentMeansCode = paymentMeansCode;
-    }
+    public class Financial{
+        /**
+         * 付款方式代码
+         */
+        private String paymentMeansCode;
+        /**
+         * 银行代码
+         */
+        private String bankCode;
+        /**
+         * 流水号/序列号
+         */
+        private String sequenceCode;
+        /**
+         * 货币金额
+         */
+        private String monetaryAmount;
+        /**
+         * 日期时间
+         */
+        private String dateTime;
 
-    public String getBankCode() {
-        return bankCode;
-    }
+        public String getPaymentMeansCode() {
+            return paymentMeansCode;
+        }
 
-    public void setBankCode(String bankCode) {
-        this.bankCode = bankCode;
-    }
+        public void setPaymentMeansCode(String paymentMeansCode) {
+            this.paymentMeansCode = paymentMeansCode;
+        }
 
-    public String getSequenceCode() {
-        return sequenceCode;
-    }
+        public String getBankCode() {
+            return bankCode;
+        }
 
-    public void setSequenceCode(String sequenceCode) {
-        this.sequenceCode = sequenceCode;
-    }
+        public void setBankCode(String bankCode) {
+            this.bankCode = bankCode;
+        }
 
-    public String getMonetaryAmount() {
-        return monetaryAmount;
-    }
+        public String getSequenceCode() {
+            return sequenceCode;
+        }
 
-    public void setMonetaryAmount(String monetaryAmount) {
-        this.monetaryAmount = monetaryAmount;
-    }
+        public void setSequenceCode(String sequenceCode) {
+            this.sequenceCode = sequenceCode;
+        }
 
-    public String getDateTime() {
-        return dateTime;
-    }
+        public String getMonetaryAmount() {
+            return monetaryAmount;
+        }
 
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+        public void setMonetaryAmount(String monetaryAmount) {
+            this.monetaryAmount = monetaryAmount;
+        }
+
+        public String getDateTime() {
+            return dateTime;
+        }
+
+        public void setDateTime(String dateTime) {
+            this.dateTime = dateTime;
+        }
     }
 }

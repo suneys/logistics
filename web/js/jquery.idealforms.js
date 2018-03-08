@@ -1889,7 +1889,8 @@
                     filters: ops.filters || '',
                     data: ops.data || {},
                     errors: ops.errors || {},
-                    flags: ops.flags || ''
+                    flags: ops.flags || '',
+                    title: ops.title || ''
                 }
 
                 var label = ops.label || ''
@@ -1897,8 +1898,9 @@
                 var list = ops.list || []
                 var placeholder = ops.placeholder || ''
                 var value = ops.value || ''
+                var title = ops.title || ''
 
-                var $field = $('<div>' +
+                var $field = $('<div title='+ title +'>' +
                     '<label>' + label + ':</label>' +
                     Utils.makeInput(name, value, type, list, placeholder) +
                     '</div>')
@@ -1911,9 +1913,10 @@
                 }
 
                 self._doMarkup($input)
-
+                console.log("ops.addAfter");
                 // Insert in DOM
                 if (ops.addAfter) {
+
                     $field.insertAfter(
                         $(Utils.getByNameOrId(ops.addAfter)).parents('.ideal-wrap')
                     )
@@ -1946,6 +1949,93 @@
             return this
 
         },
+        //wu add
+        addFieldsWithFieldset: function (fields) {
+
+            fields = Utils.convertToArray(fields)
+
+            var self = this
+
+            // Save names of all inputs in Array
+            // to use methods that take names ie. fresh()
+            var allNames = []
+
+            // Add an input to the DOM
+            function add(ops) {
+
+                var name = ops.name
+
+                var userOptions = {
+                    filters: ops.filters || '',
+                    data: ops.data || {},
+                    errors: ops.errors || {},
+                    flags: ops.flags || '',
+                    title: ops.title || ''
+                }
+
+                var label = ops.label || ''
+                var type = ops.type
+                var list = ops.list || []
+                var placeholder = ops.placeholder || ''
+                var value = ops.value || ''
+                var title = ops.title || ''
+
+                // var $field = $('<div>' +
+                //     '<label>' + label + ':</label>' +
+                //     Utils.makeInput(name, value, type, list, placeholder) +
+                //     '</div>')
+                var $field = $('<div><fieldset class="layui-elem-field site-demo-button layui-inline" style="margin: 30px 30px 0px 30px; padding: 10px; width: 600px">' +
+                    '<div'+ title +'>' +
+                    '<label>' + label + ':</label>' +
+                    Utils.makeInput(name, value, type, list, placeholder) +
+                    '</div>'+
+                    '</fieldset></div>')
+                var $input = $field.find('input, select, textarea, :button')
+
+                // Add inputs with filters to the list
+                // of user inputs to validate
+                if (userOptions.filters) {
+                    self.opts.inputs[name] = userOptions
+                }
+
+                self._doMarkup($input)
+                console.log("ops.addAfter");
+                // Insert in DOM
+                if (ops.addAfter) {
+
+                    $field.insertAfter(
+                        $(Utils.getByNameOrId(ops.addAfter)).parents('.ideal-wrap')
+                    )
+                } else if (ops.addBefore) {
+                    $field.insertBefore(
+                        $(Utils.getByNameOrId(ops.addBefore))
+                            .parents('.ideal-wrap')
+                    )
+                } else if (ops.appendToTab) {
+                    $field.insertAfter(
+                        self._getTab(ops.appendToTab).find('.ideal-wrap:last-child')
+                    )
+                } else {
+                    $field.insertAfter(self.$form.find('.ideal-wrap').last())
+                }
+
+                // Add current field name to list of names
+                allNames.push(name)
+            }
+
+            // Run through each input
+            $.each(fields, function (i, ops) {
+                add(ops)
+            })
+
+            self.reload()
+            self.freshFields(allNames)
+            self._responsive()
+
+            return this
+
+        },
+        //wu end
 
         removeFields: function (fields) {
             fields = Utils.convertToArray(fields)

@@ -11,7 +11,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>上传信息</title>
+    <title>电子路单上传</title>
 
 
     <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             color: #222;
             background: url(pattern.png);
             overflow-y: scroll;
-            padding: 60px 0 0 0;
+            /*padding: 60px 0 0 0;*/
         }
 
         #my-form {
@@ -55,8 +55,10 @@
     </style>
 </head>
 <body>
+<div style="margin: 0 auto; text-align: center">
+    <h1>电子路单</h1>
+</div>
 <div class="row">
-
     <!-- Begin Form -->
     <form id="my-form" action="${pageContext.request.contextPath }/mainServlet" method="post">
         <div class="eightcol last">

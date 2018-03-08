@@ -223,8 +223,8 @@ function GetUrlInfo(Id) {
     switch (Id) {
         case 10001: Url = getRootPath()+"login"; break;
         case 10002: Url = getRootPath()+"register"; break;
-        case 10003: Url = "/Default/Index/"; break;
-        case 10004: Url = "/Programme/ProgrammeList/"; break;
+        case 10003: Url = getRootPath()+"switch.jsp"; break;
+        case 10004: Url = getRootPath()+"money.jsp"; break;
         case 10005: Url = getRootPath()+"index.jsp"; break;
         case 10006: Url = getRootPath()+"sendEmail"; break;
         case 10007: Url = "/Send/CheckSMS/"; break;

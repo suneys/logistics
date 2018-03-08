@@ -9,6 +9,7 @@ import com.wondersgroup.cuteinfo.client.util.GUIDUtil;
 import com.wondersgroup.cuteinfo.client.util.UserTokenUtils;
 import com.yoyo.entity.Driver;
 import com.yoyo.entity.Message;
+import com.yoyo.entity.Money;
 import com.yoyo.entity.Result;
 import org.apache.log4j.Logger;
 
@@ -24,39 +25,41 @@ import java.util.Properties;
 public class MessageUtil {
     private static Logger logger = Logger.getLogger(MessageUtil.class);
     static public Result sendMessage(Message message){
-            Properties properties = PropertiesUtils.PROPERTIES.getProperties("../../client_demo.properties");
+            return sendDataToServer(getMessageToXML(message));
+    }
 
-            String targetURL = properties.getProperty("targetURL");
+    static public Result sendDataToServer(String xml){
+        Properties properties = PropertiesUtils.PROPERTIES.getProperties("../../client_demo.properties");
 
-            IMessageTransporterDAO transporter=null;
-            try {
-                UserToken token = UserTokenUtils.getTicket(properties.getProperty("username"),properties.getProperty("password"),properties.getProperty("resourceId"),properties.getProperty("authURL"));
+        String targetURL = properties.getProperty("targetURL");
 
-                USendRequset sendReq = new USendRequset();
-                sendReq.setToaddress(properties.getProperty("toaddress").split(","));
+        IMessageTransporterDAO transporter=null;
+        try {
+            UserToken token = UserTokenUtils.getTicket(properties.getProperty("username"),properties.getProperty("password"),properties.getProperty("resourceId"),properties.getProperty("authURL"));
 
-                String xml = getMessageToXML(message);
-                sendReq.setSendRequestTypeXML("LOGINK_CN_FREIGHTBROKER_WAYBILL",xml);
+            USendRequset sendReq = new USendRequset();
+            sendReq.setToaddress(properties.getProperty("toaddress").split(","));
+            sendReq.setSendRequestTypeXML("LOGINK_CN_FREIGHTBROKER_WAYBILL",xml);
 
-                transporter = ITransportClientFactory.createMessageTransporter(token,targetURL);
-                long start = System.currentTimeMillis();
-                USendResponse response = transporter.send(sendReq);
-                long end = System.currentTimeMillis();
-                //System.out.println("time:"+(end - start)+"ms"+xml.getBytes().length);
-                if (response.isSendResult()) {
-                    //System.out.println("send success");
-                    return Result.SUCCESS;
-                }else {
-                    //错误的情况下，会返回异常代码以及异常信息。异常代码请参照《3.2 共建指导性文件：交换接入》中的异常代码信息
-                    System.out.println("send error");
-                    logger.info(response.getGenericFault().getCode());
-                    logger.info(response.getGenericFault().getMessage());
-                    return Result.ERROR;
-                }
-            }catch (Exception e){
-                e.printStackTrace();
+            transporter = ITransportClientFactory.createMessageTransporter(token,targetURL);
+            long start = System.currentTimeMillis();
+            USendResponse response = transporter.send(sendReq);
+            long end = System.currentTimeMillis();
+            //System.out.println("time:"+(end - start)+"ms"+xml.getBytes().length);
+            if (response.isSendResult()) {
+                //System.out.println("send success");
+                return Result.SUCCESS;
+            }else {
+                //错误的情况下，会返回异常代码以及异常信息。异常代码请参照《3.2 共建指导性文件：交换接入》中的异常代码信息
+                System.out.println("send error");
+                logger.info(response.getGenericFault().getCode());
+                logger.info(response.getGenericFault().getMessage());
                 return Result.ERROR;
             }
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.ERROR;
+        }
     }
 
     static public  String getMessageToXML(Message message) {
@@ -159,6 +162,53 @@ public class MessageUtil {
         xml = xml + "</GoodsInfo>";
         xml = xml + "</VehicleInfo>";
         xml = xml + "<FreeText>文本</FreeText>";
+        xml = xml + "</Body>";
+        xml = xml + "</Root>";
+        return xml;
+    }
+
+
+
+    static public  String getMoneyToXML(Money money) {
+        SimpleDateFormat sf=new SimpleDateFormat("yyyyMMddHHmmss");
+        String xml = "";
+        xml += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        xml = xml + "<Root>";
+        xml = xml + "<Header>";
+        xml = xml + "<MessageReferenceNumber>"+ GUIDUtil.generateID()+"</MessageReferenceNumber>";
+        xml = xml + "<DocumentName>资金流水单</DocumentName>";
+        xml = xml + "<DocumentVersionNumber>2015WCCYR</DocumentVersionNumber>";
+        xml = xml + "<SenderCode>19458</SenderCode>";
+        xml = xml + "<RecipientCode>wcjc0001</RecipientCode>";
+        xml = xml + "<MessageSendingDateTime>"+sf.format(new Date())+"</MessageSendingDateTime>";
+        xml = xml + "<MessageFunctionCode>9</MessageFunctionCode> ";
+        xml = xml + "</Header>";
+        xml = xml + "<Body>";
+        xml = xml + "<DocumentNumber>"+money.getDocumentNumber()+"</DocumentNumber>";
+        xml = xml + "<Carrier>"+money.getCarrier()+"</Carrier>";
+        xml = xml + "<VehicleNumber>"+money.getVehicleNumber()+"</VehicleNumber>";
+        xml = xml + "<LicensePlateTypeCode>"+money.getVehicleNumber()+"</LicensePlateTypeCode>";
+        if (money.getShippingNoteList() != null) {
+            for (Money.ShippingNote shippingNote: money.getShippingNoteList()
+                 ) {
+                xml = xml + "<ShippingNoteNumber>"+shippingNote.getShippingNoteNumber()+"</ShippingNoteNumber>";
+                if (shippingNote.getRemark() != null){
+                    xml = xml + "<Remark>"+shippingNote.getRemark()+"</Remark>";
+                }
+            }
+        }
+        if (money.getFinanciallist() != null){
+            for (Money.Financial financial: money.getFinanciallist()
+                 ) {
+                xml = xml + "<PaymentMeansCode>"+financial.getPaymentMeansCode()+"</PaymentMeansCode>";
+                if (financial.getBankCode() != null){
+                    xml = xml + "<BankCode>"+financial.getBankCode()+"</BankCode>";
+                }
+                xml = xml + "<SequenceCode>"+financial.getSequenceCode()+"</SequenceCode>";
+                xml = xml + "<MonetaryAmount>"+financial.getMonetaryAmount()+"</MonetaryAmount>";
+                xml = xml + "<DateTime>"+financial.getDateTime()+"</DateTime>";
+            }
+        }
         xml = xml + "</Body>";
         xml = xml + "</Root>";
         return xml;

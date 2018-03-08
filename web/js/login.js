@@ -68,7 +68,7 @@ function SubmitLogin() {
             },
             success: function (obj) {
                 if (obj.IsOk) {
-                    window.location = GetUrlInfo(10005);
+                    window.location = GetUrlInfo(10003);
                 } else {
                     if (obj.Msg == "密码错误！") {
                         $(BtnSubmit).val("重新登录").attr("disabled", false);
