@@ -416,8 +416,6 @@
             "<div class='layui-inline' style='float: none'><div class='ideal-wrap'> " +
             "<input type='button' class='layui-btn layui-btn-danger' onclick='delShipping("+ shoppingNum +")' value='删除'/></div> </div> </div>");
 
-        console.log(options1);
-        console.log(options);
         $myform.addFields([options1,options2]);
     }
     function delShipping(shoppingNum) {
