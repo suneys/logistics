@@ -7,14 +7,9 @@ import com.wondersgroup.cuteinfo.client.exchangeserver.exchangetransport.impl.US
 import com.wondersgroup.cuteinfo.client.exchangeserver.usersecurty.UserToken;
 import com.wondersgroup.cuteinfo.client.util.GUIDUtil;
 import com.wondersgroup.cuteinfo.client.util.UserTokenUtils;
-import com.yoyo.entity.Driver;
-import com.yoyo.entity.Message;
-import com.yoyo.entity.Money;
-import com.yoyo.entity.Result;
+import com.yoyo.entity.*;
 import org.apache.log4j.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -25,10 +20,14 @@ import java.util.Properties;
 public class MessageUtil {
     private static Logger logger = Logger.getLogger(MessageUtil.class);
     static public Result sendMessage(Message message){
-            return sendDataToServer(getMessageToXML(message));
+            return sendDataToServer(getMessageToXML(message),"LOGINK_CN_FREIGHTBROKER_WAYBILL");
     }
 
-    static public Result sendDataToServer(String xml){
+    static public Result sendMoney(Money money){
+        return sendDataToServer(getMoneyToXML(money), "LOGINK_CN_FREIGHTCHARGES");
+    }
+
+    static public Result sendDataToServer(String xml,String actionType){
         Properties properties = PropertiesUtils.PROPERTIES.getProperties("../../client_demo.properties");
 
         String targetURL = properties.getProperty("targetURL");
@@ -39,7 +38,7 @@ public class MessageUtil {
 
             USendRequset sendReq = new USendRequset();
             sendReq.setToaddress(properties.getProperty("toaddress").split(","));
-            sendReq.setSendRequestTypeXML("LOGINK_CN_FREIGHTBROKER_WAYBILL",xml);
+            sendReq.setSendRequestTypeXML(actionType,xml);
 
             transporter = ITransportClientFactory.createMessageTransporter(token,targetURL);
             long start = System.currentTimeMillis();
@@ -187,19 +186,25 @@ public class MessageUtil {
         xml = xml + "<DocumentNumber>"+money.getDocumentNumber()+"</DocumentNumber>";
         xml = xml + "<Carrier>"+money.getCarrier()+"</Carrier>";
         xml = xml + "<VehicleNumber>"+money.getVehicleNumber()+"</VehicleNumber>";
-        xml = xml + "<LicensePlateTypeCode>"+money.getVehicleNumber()+"</LicensePlateTypeCode>";
+        xml = xml + "<LicensePlateTypeCode>"+money.getLicensePlateTypeCode()+"</LicensePlateTypeCode>";
+
         if (money.getShippingNoteList() != null) {
-            for (Money.ShippingNote shippingNote: money.getShippingNoteList()
+            for (ShippingNote shippingNote: money.getShippingNoteList()
                  ) {
+                xml = xml + "<ShippingNoteList>";
                 xml = xml + "<ShippingNoteNumber>"+shippingNote.getShippingNoteNumber()+"</ShippingNoteNumber>";
                 if (shippingNote.getRemark() != null){
                     xml = xml + "<Remark>"+shippingNote.getRemark()+"</Remark>";
                 }
+                xml = xml + "</ShippingNoteList>";
             }
         }
+
+
         if (money.getFinanciallist() != null){
-            for (Money.Financial financial: money.getFinanciallist()
+            for (Financial financial: money.getFinanciallist()
                  ) {
+                xml = xml + "<Financiallist>";
                 xml = xml + "<PaymentMeansCode>"+financial.getPaymentMeansCode()+"</PaymentMeansCode>";
                 if (financial.getBankCode() != null){
                     xml = xml + "<BankCode>"+financial.getBankCode()+"</BankCode>";
@@ -207,8 +212,10 @@ public class MessageUtil {
                 xml = xml + "<SequenceCode>"+financial.getSequenceCode()+"</SequenceCode>";
                 xml = xml + "<MonetaryAmount>"+financial.getMonetaryAmount()+"</MonetaryAmount>";
                 xml = xml + "<DateTime>"+financial.getDateTime()+"</DateTime>";
+                xml = xml + "</Financiallist>";
             }
         }
+
         xml = xml + "</Body>";
         xml = xml + "</Root>";
         return xml;

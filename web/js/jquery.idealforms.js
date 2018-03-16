@@ -126,7 +126,7 @@
          * @param name `name` attribute of the input
          * @param type `type` or `tagName` of the input
          */
-        makeInput: function (name, value, type, list, placeholder) {
+        makeInput: function (name, value, type, list, placeholder,id) {
 
             var markup, items = [], item, i, len
 
@@ -146,7 +146,7 @@
             if (/^(text|password|email|number|search|url|tel|file|hidden)$/.test(type))
                 markup = '<input ' +
                     'type="' + type + '" ' +
-                    'id="' + name + '" ' +
+                    'id="' + id + '" ' +
                     'name="' + name + '" ' +
                     'value="' + value + '" ' +
                     (placeholder && 'placeholder="' + placeholder + '"') +
@@ -154,7 +154,7 @@
 
             // Textarea
             if (/textarea/.test(type)) {
-                markup = '<textarea id="' + name + '" name="' + name + '" value="' + value + '"></textarea>'
+                markup = '<textarea id="' + id + '" name="' + name + '" value="' + value + '"></textarea>'
             }
 
             // Select
@@ -166,7 +166,7 @@
                     items.push('<option value="' + value + '">' + item + '</option>')
                 }
                 markup =
-                    '<select id="' + name + '" name="' + name + '">' +
+                    '<select id="' + id + '" name="' + name + '">' +
                     items.join('') +
                     '</select>'
             }
@@ -1305,7 +1305,7 @@
             return {
                 inputs: this.$form.find('input, select, textarea, :button'),
                 labels: this.$form.find('div > label:first-child'),
-                text: this.$form.find('input:not([type="checkbox"], [type="radio"], [type="submit"]), textarea'),
+                text: this.$form.find('input:not([type="checkbox"], [type="radio"], [type="submit"],[type="button"]), textarea'),
                 select: this.$form.find('select'),
                 radiocheck: this.$form.find('input[type="radio"], input[type="checkbox"]'),
                 buttons: this.$form.find(':button'),
@@ -1884,13 +1884,13 @@
             function add(ops) {
 
                 var name = ops.name
+                var id = ops.id || ''
 
                 var userOptions = {
                     filters: ops.filters || '',
                     data: ops.data || {},
                     errors: ops.errors || {},
                     flags: ops.flags || '',
-                    title: ops.title || ''
                 }
 
                 var label = ops.label || ''
@@ -1902,7 +1902,7 @@
 
                 var $field = $('<div title='+ title +'>' +
                     '<label>' + label + ':</label>' +
-                    Utils.makeInput(name, value, type, list, placeholder) +
+                    Utils.makeInput(name, value, type, list, placeholder,id) +
                     '</div>')
                 var $input = $field.find('input, select, textarea, :button')
 
@@ -1913,7 +1913,6 @@
                 }
 
                 self._doMarkup($input)
-                console.log("ops.addAfter");
                 // Insert in DOM
                 if (ops.addAfter) {
 
